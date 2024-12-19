@@ -58,6 +58,26 @@ aa=-1+(ai-1)*0.1;
 
 % 定义优化目标函数
 objective_func = @(pid_pram) calculate_qq(pid_pram, NN, TT, d, lmd,aa);
+% 设置初始值，假设为 [0 0 0]0.4984   -0.7212    0.2241
+% initial_guess = [0.4984   -0.7212    0.2241];
+% 使用fminsearch优化目标函数
+%optimal_pid_pram = fminsearch(objective_func, initial_guess);
+% 使用fmincon优化函数 fval目标函数值  退出标志exitflag  优化过程的详细信息output
+% % 定义下界
+% lb = [-10; -10; -10];
+% % 定义上界
+% ub = [10; 10; 10];
+% % 线性不等式约束 A*x <= b
+% A = [];
+% b = [];
+% % 线性等式约束 Aeq*x = beq
+% Aeq = [];
+% beq = [];
+% options = optimoptions('fmincon','Algorithm','interior-point');
+% [optimal_pid_pram, fval, exitflag, output] = fmincon(objective_func, initial_guess, A, b, Aeq, beq, lb, ub, '', options);
+% % 输出优化结果
+% xxx(ai,:)=optimal_pid_pram;
+
     x0=[0 0 0];
     A = [-1 -1 -1;0 1 2;0 0 -1];
     b = [-0.0001;-0.0001;-0.0001];
@@ -81,8 +101,6 @@ ggg3=impulse(GGG3,100030);
 for i=1:1:d+1000%lqg
     J(ai,1)=J(ai,1)+ggg1(i)^2+lmd*ggg2(i)^2;
 end
-    dn=3;
-    NUM=dn*d; %优化长度 每过一个时延 阶数增加一
 for i=1:1:d+NUM   %lqg
     J(ai,2)=J(ai,2)+ggg1(i)^2+lmd*ggg2(i)^2;
 end
@@ -195,7 +213,7 @@ function qq = calculate_qq(pid_pram, NN, TT, d, lmd,aa)
     end
     %LQG
     for i=1:1:NUM
-        qq=qq+double(lmd)*double(gf3(i)^2);
+        qq=qq+lmd*double(gf3(i)^2;
     end
 
 end

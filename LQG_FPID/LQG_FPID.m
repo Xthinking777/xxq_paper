@@ -63,6 +63,7 @@ aimin=11;%FPID参数τ
 aimax=11;
 for ai=aimin:1:aimax
 aa=-1+(ai-1)*0.1;
+
 dn=3;
 NUM=dn*d; %优化长度 每过一个时延 阶数增加一
 N0=NAD;
