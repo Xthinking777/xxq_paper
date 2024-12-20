@@ -51,16 +51,17 @@ end
 
 
 %LQG_3D(:,1)=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0  2 3 4 5 6 7 8 9 10];%λ集合 算例3
-lmd_set=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0  2 3 4 5 6 7];
+%lmd_set=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0  2 3 4 5 6 7];%λ集合 算例2 估计值
+lmd_set=[ 0.8 ];%λ集合 算例2 估计值
 NUM_lmd = length(lmd_set);
-LQG_3D=zeros(NUM_lmd,3);%lmd var(y) var(u)
+LQG_3D=zeros(NUM_lmd,7);%lmd var(y) var(u) PID F
 LQG_3D(:,1)=lmd_set;%λ集合 算例1估计值
 
 for lmd_i=1:1:NUM_lmd%遍历λ
 lmd=LQG_3D(lmd_i,1);%LQG参数λ
 
-aimin = 1;  % FPID参数τ
-aimax = 21;
+aimin = 11;  % FPID参数τ
+aimax = 11;
 J = zeros(21, 4);    % 21*4 零矩阵  21个τ 存储方差信息
 xxx = zeros(21, 3);  % 21*3 pid的三个参数
 for tau_i=aimin:1:aimax%遍历τ
@@ -77,9 +78,12 @@ objective_func = @(pid_pram) calculate_qq(pid_pram, NN, TT, d, lmd,tau);
 %     VUB = [10000 0 10000];
     VLB = [];
     VUB = [];
-xxx(tau_i,:)=fmincon(objective_func, x0, A, b, Aeq, beq, VLB, VUB);
+% 设置fmincon的选项，关闭显示
+options = optimoptions('fmincon', 'Display', 'off');
+% 调用fmincon函数，并将选项作为参数传递
+xxx(tau_i,:) = fmincon(objective_func, x0, A, b, Aeq, beq, VLB, VUB, [], options);
 
-KZQ1=filt(xxx(tau_i,:),[1 -1-tau tau]);
+KZQ1=filt(xxx(tau_i,:),[1 -1+tau -tau]);
 GGG1=NN/(1+TT*filt([zeros(1,d) 1],1)*KZQ1);%G
 ggg1=impulse(GGG1,1030);%对应g(i)
 GGG2=NN*KZQ1/(1+TT*filt([zeros(1,d) 1],1)*KZQ1);%H
@@ -105,21 +109,26 @@ end
 
 %%找到LQG最小的对应的最优τ
 Jmin=100000;
-tau_opt=11;
+tau_opt_i=11;%初值为0
 for i=aimin:1:aimax
     if Jmin>J(i,1)
-        tau_opt=i;%记录最优τ对应的下标
+        tau_opt_i=i;%记录最优τ对应的下标
         Jmin=J(i,1);
     end
 end
-%%
-kcs=xxx(tau_opt,:);
-acs=-1+(tau_opt-1)*0.1;
+%%记录数据
+kcs=xxx(tau_opt_i,:);
+tau_opt=-1+(tau_opt_i-1)*0.1;
 fprintf('lmd lqg    lqg    var(y)    var(u):\n %f %f  %f  %f  %f\n',...
-         lmd,J(tau_opt,1),J(tau_opt,2),sqrt(J(tau_opt,3)),sqrt(J(tau_opt,4)));
-fprintf("FPID:\n %f %f %f %f",acs,kcs);
-LQG_3D(lmd_i,2)=sqrt(J(tau_opt,3));%var(y)
-LQG_3D(lmd_i,3)=sqrt(J(tau_opt,4));%var(u)
+         lmd,J(tau_opt_i,1),J(tau_opt_i,2),sqrt(J(tau_opt_i,3)),sqrt(J(tau_opt_i,4)));
+fprintf("FPID:\n %f %f %f %f",tau_opt,kcs);
+LQG_3D(lmd_i,2)=sqrt(J(tau_opt_i,3));%var(y)
+LQG_3D(lmd_i,3)=sqrt(J(tau_opt_i,4));%var(u)
+LQG_3D(lmd_i,4)=kcs(1);%k1
+LQG_3D(lmd_i,5)=kcs(2);%k2
+LQG_3D(lmd_i,6)=kcs(3);%k3
+LQG_3D(lmd_i,7)=tau_opt;%tau
+
 end
 
 % 计算qq(LQG)的函数(用FPID参数表示出LQG基准)
