@@ -1,25 +1,24 @@
 %LQG基准FPID
 %经济指标测试
-
+%1.选择模型
 choose_model = 'C';
-
 switch choose_model
     case 'A'
         % 数值算例原模型
-        NN = filt([1], [1 -0.8899]);
+        NN = filt(1, [1 -0.8899]);
         TT = filt(0.6299, [1 -0.8899]);
         d = 3;
         N = NN;
         T = TT * filt([zeros(1, d) 1], 1);
-        disp('数值算例原模型');
+        disp('数值算例1原模型');
     case 'B'
         % 工业实例原模型
-        NN = filt([0.045], [1 -0.93]);
+        NN = filt(0.045, [1 -0.93]);
         TT = filt(0.4866, [1 -0.5134]);
         d = 6;
         N = NN;
         T = TT * filt([zeros(1, d) 1], 1);
-        disp('工业实例原模型');
+        disp('工业实例2原模型');
     case 'C'
         % 数值算例1(估计值)
         NN = filt([1.01 -0.0297], [1 -0.924 0.0320]);
@@ -35,49 +34,40 @@ switch choose_model
         d = 6;
         N = NN;
         T = TT * filt([zeros(1, d) 1], 1);
-        disp('工业实例3(估计值)');
+        disp('工业实例2(估计值)');
     case 'E'
         % 工业实例3延迟焦化炉 原模型
         NN = filt([1 4.821], [1 -0.8899]);
-        TT = filt([0.2155 0], [1 -0.9418]);
+        TT = filt([0.2155 0], [1 -0.9418]);%去时延
         d = 6;
         N = NN;
-        T = TT * filt([zeros(1, d) 1], 1);
-        disp('工业实例3延迟焦化炉');
+        T = TT * filt([zeros(1, d) 1], 1);%带时延
+        disp('工业实例3延迟焦化炉原模型');
     otherwise
         disp('无效的模型');
 end
 
+
+
+
+%LQG_3D(:,1)=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0  2 3 4 5 6 7 8 9 10];%λ集合 算例3
+lmd_set=[0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0  2 3 4 5 6 7];
+NUM_lmd = length(lmd_set);
+LQG_3D=zeros(NUM_lmd,3);%lmd var(y) var(u)
+LQG_3D(:,1)=lmd_set;%λ集合 算例1估计值
+
+for lmd_i=1:1:NUM_lmd%遍历λ
+lmd=LQG_3D(lmd_i,1);%LQG参数λ
+
+aimin = 1;  % FPID参数τ
+aimax = 21;
 J = zeros(21, 4);    % 21*4 零矩阵  21个τ 存储方差信息
 xxx = zeros(21, 3);  % 21*3 pid的三个参数
-aimin = 11;  % FPID参数τ
-aimax = 11;
-lmd = 0.8;  % LQG参数λ
-for ai=aimin:1:aimax
-aa=-1+(ai-1)*0.1;
+for tau_i=aimin:1:aimax%遍历τ
+tau=-1+(tau_i-1)*0.1;
 
 % 定义优化目标函数
-objective_func = @(pid_pram) calculate_qq(pid_pram, NN, TT, d, lmd,aa);
-% 设置初始值，假设为 [0 0 0]0.4984   -0.7212    0.2241
-% initial_guess = [0.4984   -0.7212    0.2241];
-% 使用fminsearch优化目标函数
-%optimal_pid_pram = fminsearch(objective_func, initial_guess);
-% 使用fmincon优化函数 fval目标函数值  退出标志exitflag  优化过程的详细信息output
-% % 定义下界
-% lb = [-10; -10; -10];
-% % 定义上界
-% ub = [10; 10; 10];
-% % 线性不等式约束 A*x <= b
-% A = [];
-% b = [];
-% % 线性等式约束 Aeq*x = beq
-% Aeq = [];
-% beq = [];
-% options = optimoptions('fmincon','Algorithm','interior-point');
-% [optimal_pid_pram, fval, exitflag, output] = fmincon(objective_func, initial_guess, A, b, Aeq, beq, lb, ub, '', options);
-% % 输出优化结果
-% xxx(ai,:)=optimal_pid_pram;
-
+objective_func = @(pid_pram) calculate_qq(pid_pram, NN, TT, d, lmd,tau);
     x0=[0 0 0];
     A = [-1 -1 -1;0 1 2;0 0 -1];
     b = [-0.0001;-0.0001;-0.0001];
@@ -87,53 +77,50 @@ objective_func = @(pid_pram) calculate_qq(pid_pram, NN, TT, d, lmd,aa);
 %     VUB = [10000 0 10000];
     VLB = [];
     VUB = [];
-xxx(ai,:)=fmincon(objective_func, x0, A, b, Aeq, beq, VLB, VUB);
+xxx(tau_i,:)=fmincon(objective_func, x0, A, b, Aeq, beq, VLB, VUB);
 
-
-
-KZQ1=filt(xxx(ai,:),[1 -1-aa aa]);
+KZQ1=filt(xxx(tau_i,:),[1 -1-tau tau]);
 GGG1=NN/(1+TT*filt([zeros(1,d) 1],1)*KZQ1);%G
-ggg1=impulse(GGG1,100030);%对应g(i)
+ggg1=impulse(GGG1,1030);%对应g(i)
 GGG2=NN*KZQ1/(1+TT*filt([zeros(1,d) 1],1)*KZQ1);%H
-ggg2=impulse(GGG2,100030);%对应h(i)
+ggg2=impulse(GGG2,1030);%对应h(i)
 GGG3=N/(1+TT*KZQ1);%去时延的G
-ggg3=impulse(GGG3,100030);
+ggg3=impulse(GGG3,1030);
 for i=1:1:d+1000%lqg
-    J(ai,1)=J(ai,1)+ggg1(i)^2+lmd*ggg2(i)^2;
+    J(tau_i,1)=J(tau_i,1)+ggg1(i)^2+lmd*ggg2(i)^2;
 end
-for i=1:1:d+NUM   %lqg
-    J(ai,2)=J(ai,2)+ggg1(i)^2+lmd*ggg2(i)^2;
+    dn=3;
+    NUM=dn*d; %优化长度 每过一个时延 阶数增加一
+for i=1:1:d+NUM   %部分lqg
+    J(tau_i,2)=J(tau_i,2)+ggg1(i)^2+lmd*ggg2(i)^2;
 end
 for i=1:1:d+1000%var(y)
-    J(ai,3)=J(ai,3)+ggg1(i)^2;
+    J(tau_i,3)=J(tau_i,3)+ggg1(i)^2;
 end
 for i=1:1:d+1000%var(u)
-     J(ai,4)=J(ai,4)+ggg2(i)^2;
+     J(tau_i,4)=J(tau_i,4)+ggg2(i)^2;
 end
-figure(ai)
-plot(ggg3,'r');%去时延脉冲响应
-
 
 end
 
-%%
-%找到LQG最小的对应的最优τ
+%%找到LQG最小的对应的最优τ
 Jmin=100000;
-ji=11;
-% for i=aimin:1:aimax
-%     if Jmin>J(i,1)
-%         ji=i;%记录最优τ对应的下标
-%         Jmin=J(i,1);
-%     end
-% end
+tau_opt=11;
+for i=aimin:1:aimax
+    if Jmin>J(i,1)
+        tau_opt=i;%记录最优τ对应的下标
+        Jmin=J(i,1);
+    end
+end
 %%
-kcs=xxx(ji,:);
-acs=-1+(ji-1)*0.1;
-fprintf(' lqg    lqg    var(y)    var(u):\n %f  %f  %f  %f\n',...
-         J(ji,1),J(ji,2),sqrt(J(ji,3)),sqrt(J(ji,4)));
+kcs=xxx(tau_opt,:);
+acs=-1+(tau_opt-1)*0.1;
+fprintf('lmd lqg    lqg    var(y)    var(u):\n %f %f  %f  %f  %f\n',...
+         lmd,J(tau_opt,1),J(tau_opt,2),sqrt(J(tau_opt,3)),sqrt(J(tau_opt,4)));
 fprintf("FPID:\n %f %f %f %f",acs,kcs);
-
-
+LQG_3D(lmd_i,2)=sqrt(J(tau_opt,3));%var(y)
+LQG_3D(lmd_i,3)=sqrt(J(tau_opt,4));%var(u)
+end
 
 % 计算qq(LQG)的函数(用FPID参数表示出LQG基准)
 function qq = calculate_qq(pid_pram, NN, TT, d, lmd,aa)
@@ -206,14 +193,14 @@ function qq = calculate_qq(pid_pram, NN, TT, d, lmd,aa)
         gf3(i)=a1*gf2(i)+a2*gf2(i-1)+a3*gf2(i-2);
     end
     
-    qq=double(0.00000);%LQG
+    qq=double(0.0);%LQG
     %最小方差
     for i=1:1:d+NUM
         qq=qq+double(gf1(i)^2);
     end
     %LQG
     for i=1:1:NUM
-        qq=qq+lmd*double(gf3(i)^2;
+        qq=qq+double(lmd)*double(gf3(i)^2);
     end
 
 end
