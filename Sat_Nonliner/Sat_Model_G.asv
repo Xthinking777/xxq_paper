@@ -1,0 +1,14 @@
+%经济指标数值算例 模型估计
+clear
+Data_Am=20000;%Amount of output data for close-loop system
+Data_G=300;%Closed loop impulse response truncated data
+sim('Pid_MVC_final');
+KZQ1=filt([2.841 -4.406 1.749],[1 -1]); 
+y_out=Fcor(KZQ,T,N,y_a);%Generate output data
+g_1=fc(y_out(1:Data_Am));%Fcor
+G_est=filt(g_1(1:Data_G),1);
+G_theo=N/(1+T*KZQ);
+% G1=G;
+
+GBD=impulse(G_theo,100);
+GGBD=impulse(G_est,100);
