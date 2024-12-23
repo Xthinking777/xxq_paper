@@ -32,9 +32,29 @@ B(:,2)=[-0.4,0,0,-0.17,-0.47,0.23,-0.07,1.08,0,0.7,-0.2];
 B(:,3)=[0,0,0,0.06,0.21,0.23,0.68,-0.18,0,0,0];
 B(:,4)=[0,0,0,0,0,-0.06,-0.21,0,0,0,0];
 delay=[3,12,28,6,6,3,6,5,3,6,3];
-number=6;
-d=delay(number);
-d=3;
+% number=6;
+% d=delay(number);
+% T=filt(C(number),[1 D(number)])*filt([zeros(1,d) 1],1);  %对象传递函数
+% N=filt([I(number) Q(number)],[1 B(number,1) B(number,2) B(number,3) B(number,4)]);   %扰动传递函数
+%F=[I(number) Q(number)];
+%1数值算例初始模型
+KZQ_1=filt([0.724938684 -1.207371481 0.518604416],[1 -1]);   %控制器
+N_1=filt([1 0],[1 -0.8899]);
+T_1=filt([zeros(1,3) 0.6299],[1 -0.8899]);
+d_1=3;
+%2工业实例初始模型
+KZQ_2=filt([0.840076380 -1.415313385 0.617332304],[1 -1]);   %控制器
+N_2=filt(0.045 ,[1 -0.9300]);
+T_2=filt([zeros(1,6) 0.4866],[1 -0.5134]);
+d_2=6;
+%选择模型--------------------------
+KZQ=KZQ_2;   %控制器
+N=N_2;
+T=T_2;
+d=d_2;
+%选择模型--------------------------
+
+
 yh=d;
 kd=10;
 if d==3
@@ -44,15 +64,6 @@ if d>9
     yh=9;
     Data_Am=50000;
 end
-
-T=filt(C(number),[1 D(number)])*filt([zeros(1,d) 1],1);  %对象传递函数
-N=filt([I(number) Q(number)],[1 B(number,1) B(number,2) B(number,3) B(number,4)]);   %扰动传递函数
-F=[I(number) Q(number)];
-KZQ=filt(K(number,:),[1 -1]);   %控制器
-N=filt([1 0],[1 -0.8899]);
-T=filt([zeros(1,d) 0.6299],[1 -0.8899]);
-
-
 %定义权重
 hf1=zeros(1,10);   
 hf2=zeros(1,10);
@@ -65,7 +76,7 @@ for i=1:1:yh+4
 end
 %fcor算法估计闭环脉冲响应系数G
 y_1=Fcor(KZQ,T,N,y_a);%Generate output data
-g_1=Get_f_ya(y_1(1:Data_Am),F);%Fcor
+%g_1=Get_f_ya(y_1(1:Data_Am),F);%Fcor
 g_1=fc(y_1(1:Data_Am));%Fcor
 % G1=LSe(5,40,g_1(1:300)',1);
 G1=filt(g_1(1:Data_G),1);
@@ -138,7 +149,7 @@ xxx2=a3/a2;
 % end
 % G1=filt(g_1(1:Data_G),1);
 y_1=Fcor(KZQ,T,N,y_a);%Generate output data
-g_1=Get_f_ya(y_1(1:Data_Am),F);%Fcor
+%g_1=Get_f_ya(y_1(1:Data_Am),F);%Fcor
 g_1=fc(y_1(1:Data_Am));%Fcor
 % G1=LSe(5,40,g_1(1:300)',1);
 G1=filt(g_1(1:Data_G),1);
