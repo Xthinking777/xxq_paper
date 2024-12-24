@@ -7,6 +7,7 @@ __MWOPC_PACKAGE_BEGIN__ R2024a
 __MWOPC_PART_BEGIN__ /[Content_Types].xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default ContentType="application/vnd.mathworks.matlab.mxarray+binary" Extension="mxarray"/>
   <Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>
   <Default ContentType="application/vnd.mathworks.simulink.mdl+xml" Extension="xml"/>
   <Override ContentType="application/vnd.openxmlformats-package.core-properties+xml" PartName="/metadata/coreProperties.xml"/>
@@ -30,6 +31,7 @@ __MWOPC_PART_BEGIN__ /_rels/.rels
   <Relationship Id="blockDiagramDefaults" Target="simulink/bddefaults.xml" Type="http://schemas.mathworks.com/simulink/2017/relationships/blockDiagramDefaults"/>
   <Relationship Id="configSetInfo" Target="simulink/configSetInfo.xml" Type="http://schemas.mathworks.com/simulink/2014/relationships/configSetInfo"/>
   <Relationship Id="modelDictionary" Target="simulink/modelDictionary.xml" Type="http://schemas.mathworks.com/simulinkModel/2016/relationships/modelDictionary"/>
+  <Relationship Id="modelWorkspace" Target="simulink/modelWorkspace.mxarray" Type="http://schemas.mathworks.com/simulinkModel/2010/relationships/modelWorkspaceData"/>
   <Relationship Id="rId1" Target="metadata/mwcoreProperties.xml" Type="http://schemas.mathworks.com/package/2012/relationships/coreProperties"/>
   <Relationship Id="rId2" Target="metadata/mwcorePropertiesExtension.xml" Type="http://schemas.mathworks.com/package/2014/relationships/corePropertiesExtension"/>
   <Relationship Id="rId3" Target="metadata/mwcorePropertiesReleaseInfo.xml" Type="http://schemas.mathworks.com/package/2019/relationships/corePropertiesReleaseInfo"/>
@@ -1727,9 +1729,17 @@ __MWOPC_PART_BEGIN__ /simulink/modelDictionary.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <MF0 version="1.1" defaultPackage="slid" packageUris="http://schema.mathworks.com/mf0/slid/R2023a_20220628">
   <System type="System" uuid="29340765-22e4-4945-b5ec-2dda87ecd08a">
+    <Parameter type="Parameter" uuid="2af57e51-3290-4f0b-807d-445f3c7e8712">
+      <Identifier>Q_fenzi</Identifier>
+      <Name>Q_fenzi</Name>
+    </Parameter>
     <Interface type="Interface" uuid="ef06f82b-98c3-4b05-a66d-048f4bfa5a43"/>
   </System>
 </MF0>
+__MWOPC_PART_BEGIN__ /simulink/modelWorkspace.mxarray BASE64
+AAFJTQAAAAAOAAAAkAAAAAYAAAAIAAAAAgAAAAAAAAAFAAAACAAAAAEAAAABAAAAAQAAAAAAAAAF
+AAQACAAAAAEAAAAIAAAAUV9mZW56aQAOAAAASAAAAAYAAAAIAAAABgAAAAAAAAAFAAAACAAAAAEA
+AAADAAAAAQAAAAAAAAAJAAAAGAAAAO58PzVeugZAObTIdr6fEcCWQ4ts5/v7Pw==
 __MWOPC_PART_BEGIN__ /simulink/ScheduleCore.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <sltp_graph version="1.1" packageUris="http://schema.mathworks.com/mf0/sltp_mm/R2023a_202209151115">
@@ -1849,15 +1859,7 @@ __MWOPC_PART_BEGIN__ /simulink/systems/system_root.xml
     <P Name="InputPortMap">u0</P>
     <P Name="DelayLength">5</P>
   </Block>
-  <Block BlockType="DiscreteFilter" Name="Discrete Filter" SID="224">
-    <PortCounts in="1" out="1"/>
-    <P Name="Position">[725, 264, 865, 326]</P>
-    <P Name="ZOrder">83</P>
-    <P Name="InputPortMap">u0</P>
-    <P Name="Numerator">[0.2]</P>
-    <P Name="Denominator">[1 -0.8]</P>
-  </Block>
-  <Block BlockType="DiscreteFilter" Name="Discrete Filter1" SID="232">
+  <Block BlockType="DiscreteFilter" Name="KZQ" SID="232">
     <PortCounts in="1" out="1"/>
     <P Name="Position">[485, 264, 620, 326]</P>
     <P Name="ZOrder">91</P>
@@ -1865,7 +1867,7 @@ __MWOPC_PART_BEGIN__ /simulink/systems/system_root.xml
     <P Name="Numerator">[2.841 -4.406 1.749]</P>
     <P Name="Denominator">[1 -1]</P>
   </Block>
-  <Block BlockType="DiscreteFilter" Name="Discrete Filter2" SID="233">
+  <Block BlockType="DiscreteFilter" Name="N" SID="233">
     <PortCounts in="1" out="1"/>
     <P Name="Position">[855, 177, 965, 233]</P>
     <P Name="ZOrder">92</P>
@@ -1892,6 +1894,14 @@ __MWOPC_PART_BEGIN__ /simulink/systems/system_root.xml
     <P Name="ZOrder">89</P>
     <P Name="Inputs">|+-</P>
   </Block>
+  <Block BlockType="DiscreteFilter" Name="T" SID="224">
+    <PortCounts in="1" out="1"/>
+    <P Name="Position">[725, 264, 865, 326]</P>
+    <P Name="ZOrder">83</P>
+    <P Name="InputPortMap">u0</P>
+    <P Name="Numerator">[0.2]</P>
+    <P Name="Denominator">[1 -0.8]</P>
+  </Block>
   <Block BlockType="ToWorkspace" Name="To Workspace" SID="13">
     <PortCounts in="1"/>
     <P Name="Position">[1090, 280, 1150, 310]</P>
@@ -1905,7 +1915,7 @@ __MWOPC_PART_BEGIN__ /simulink/systems/system_root.xml
     <P Name="Position">[614, 180, 646, 210]</P>
     <P Name="ZOrder">94</P>
     <P Name="BlockRotation">270</P>
-    <P Name="NameLocation">right</P>
+    <P Name="NameLocation">top</P>
     <P Name="VariableName">u_k</P>
     <P Name="MaxDataPoints">inf</P>
     <P Name="FixptAsFi">on</P>
@@ -1916,7 +1926,7 @@ __MWOPC_PART_BEGIN__ /simulink/systems/system_root.xml
     <P Name="Position">[672, 180, 738, 210]</P>
     <P Name="ZOrder">95</P>
     <P Name="BlockRotation">270</P>
-    <P Name="NameLocation">right</P>
+    <P Name="NameLocation">top</P>
     <P Name="VariableName">sat_u_k</P>
     <P Name="MaxDataPoints">inf</P>
     <P Name="FixptAsFi">on</P>
@@ -2025,8 +2035,8 @@ __MWOPC_PART_BEGIN__ /simulink/windowsInfo.xml
         <P Name="LoadSaveID" Class="char">0</P>
         <P Name="Extents" Class="double">[1902.0, 1165.0]</P>
         <P Name="ZoomFactor" Class="double">1.75</P>
-        <P Name="Offset" Class="double">[162.39938753532294, -86.561750175707687]</P>
-        <P Name="SceneRectInView" Class="double">[162.39938753532294, -86.561750175707687, 1086.8571428571429, 665.71428571428567]</P>
+        <P Name="Offset" Class="double">[250.00144610404629, 10.645701825662002]</P>
+        <P Name="SceneRectInView" Class="double">[250.00144610404629, 10.645701825662002, 1086.8571428571429, 665.71428571428567]</P>
       </Object>
       <Array PropName="DockComponentsInfo" Type="Simulink.DockComponentInfo" Dimension="1*3">
         <Object ObjectID="6">

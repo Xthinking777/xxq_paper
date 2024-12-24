@@ -17,6 +17,7 @@ e=resid(m1,y);%求序列y的残差
 
 e_var=var(e);%求残差方差
 e=e*(1/sqrt(e_var));
+f_ya = zeros(1, 1001); % 初始化输出数组
 for r=0:1000
     f_ya(r+1)=y(r+1:end)'*e(1:end-r)/(N-r);%FCOR算法
 end

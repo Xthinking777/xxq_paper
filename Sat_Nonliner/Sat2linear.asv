@@ -1,0 +1,99 @@
+g_1=g_est_1(1:200);
+g_2=g_est_2(1:200);
+g_0=zeros(1:200);
+var_y_est0=1.6410;
+i=1:1:200;
+
+%r=(g_2(i)-g_1(i))*(g_1(i)-g_0(i))/(g_2(i)-g_0(i))^2;
+r_set=zeros(1:100);
+for r_i=1:1:100
+    for i = 1:200
+        g_0(i) = solve_g0(r_i/100, g_1(i), g_2(i));
+    end
+    var_y_est00=0;
+    for i = 1:200
+        var_y_est00=var_y_est00+ g_0(i)^2;
+    end
+    r_set(r_i)=abs(var_y_est00-var_y_est0);
+end
+
+% 
+% function r_opt = golden_section_search(g_1, g_2, var_y_est0, precision)
+%     % 定义黄金比例
+%     phi = (sqrt(5) - 1) / 2;
+% 
+%     % 初始搜索区间
+%     a = 0;
+%     b = 1;
+% 
+%     % 计算初始的两个点
+%     r1 = a + (1 - phi) * (b - a);
+%     r2 = a + phi * (b - a);
+% 
+%     % 计算初始的目标函数值
+%     var_y_est00_r1 = calculate_var_y_est00(r1, g_1, g_2);
+%     var_y_est00_r2 = calculate_var_y_est00(r2, g_1, g_2);
+% 
+%     % 迭代直到满足停止条件
+%     while (b - a) > precision
+%         if abs(var_y_est00_r1 - var_y_est0) < abs(var_y_est00_r2 - var_y_est0)
+%             b = r2;
+%             r2 = r1;
+%             r1 = a + (1 - phi) * (b - a);
+%             var_y_est00_r2 = var_y_est00_r1;
+%             var_y_est00_r1 = calculate_var_y_est00(r1, g_1, g_2);
+%         else
+%             a = r1;
+%             r1 = r2;
+%             r2 = a + phi * (b - a);
+%             var_y_est00_r1 = var_y_est00_r2;
+%             var_y_est00_r2 = calculate_var_y_est00(r2, g_1, g_2);
+%         end
+%     end
+% 
+%     % 返回最优的 r 值
+%     r_opt = (a + b) / 2;
+% end
+% 
+% function var_y_est00 = calculate_var_y_est00(r, g_1, g_2)
+%     % 计算 g_0
+%     g_0 = zeros(1, 200);
+%     for i = 1:200
+%         g_0(i) = solve_g0(r, g_1(i), g_2(i));
+%     end
+% 
+%     % 计算 var_y_est00
+%     var_y_est00 = sum(g_0.^2);
+% end
+
+
+function g0 = solve_g0(r, g1, g2)
+    % 验证输入值是否有效
+    if g2 - g1 == 0 || g2 - g0 == 0
+        error('g2, g1, and g0 must be distinct.');
+    end
+    
+    % 根据给定的 r 值解出 g0
+    % r = (g2 - g1) * (g1 - g0) / (g2 - g0)^2
+    % 重新排列方程求解 g0
+    % r * (g2 - g0)^2 = (g2 - g1) * (g1 - g0)
+    % r * (g2^2 - 2*g2*g0 + g0^2) = g2*g1 - g1*g0 - g2*g0 + g0^2
+    % r*g2^2 - 2*r*g2*g0 + r*g0^2 = g2*g1 - g1*g0 - g2*g0 + g0^2
+    % r*g2^2 - g2*g1 = 2*r*g2*g0 - g1*g0 + g0^2 - r*g0^2
+    % g0^2*(r-1) + g0*(-2*r*g2 + g1 - g2) + r*g2^2 - g2*g1 = 0
+    % 这是一个关于 g0 的二次方程，可以使用二次公式求解
+    A = r - 1;
+    B = -2*r*g2 + g1 - g2;
+    C = r*g2^2 - g2*g1;
+    
+    % 计算判别式
+    discriminant = B^2 - 4*A*C;
+    
+    % 检查判别式是否非负
+    if discriminant < 0
+        error('No real solution for g0 exists.');
+    end
+    
+    % 使用二次公式求解 g0
+    g0 = (-B + sqrt(discriminant)) / (2*A);
+end
