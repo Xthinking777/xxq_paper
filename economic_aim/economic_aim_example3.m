@@ -86,17 +86,17 @@ x0=[490 58.3 12.4742 0];
          -30;
          ];
     Aeq = [1 -3.7 0 0;
-           0 0 1 0;
-           0 0 0 1;
+           % 0 0 1 0;
+           % 0 0 0 1;
           ];
     beq = [274.3;
-             0.38;
-             3.769;
+             % 0.38;
+             % 3.769;
             ];
     VLB = [490 30 0 0];
     VUB = [500 80 100 100];
-%zyj=fmincon(f, x0, A, b, Aeq, beq, VLB, VUB,'fitting_constraint3',optimoptions('fmincon', 'Display', 'off'));
-zyj=fmincon(f, x0, A, b, Aeq, beq, VLB, VUB,'',optimoptions('fmincon', 'Display', 'off'));
+zyj=fmincon(f, x0, A, b, Aeq, beq, VLB, VUB,'fitting_constraint3',optimoptions('fmincon', 'Display', 'off'));
+%zyj=fmincon(f, x0, A, b, Aeq, beq, VLB, VUB,'',optimoptions('fmincon', 'Display', 'off'));
 J=(100-((8.3*1e-3 + 3.1*1e-2*1.294)*(zyj(1) + 1.35*1e-4*zyj(1)^2)-1.1)-3);
 zyj
 J
