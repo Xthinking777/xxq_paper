@@ -1115,8 +1115,8 @@ __MWOPC_PART_BEGIN__ /simulink/systems/system_root.xml
   <Block BlockType="Saturate" Name="Saturation" SID="234">
     <P Name="Position">[650, 280, 680, 310]</P>
     <P Name="ZOrder">93</P>
-    <P Name="UpperLimit">sat_alpha</P>
-    <P Name="LowerLimit">-sat_alpha</P>
+    <P Name="UpperLimit">0</P>
+    <P Name="LowerLimit">0</P>
     <P Name="ZeroCross">off</P>
   </Block>
   <Block BlockType="Sum" Name="Sum" SID="229">
