@@ -1,6 +1,6 @@
-function [eT]=Tansfor(est_T,d)
-class=12;%阶数
-lemma=100;%
+function [eT]=Tansfor(est_T,d,Class,Lemma)
+class=Class;%阶数n
+lemma=Lemma;%取λ+n做计算
 est_Td=est_T(d+1:end);
 fin=[];
 for i=1:class
