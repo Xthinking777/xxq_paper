@@ -13,5 +13,5 @@ A=pinv(fin'*fin)*fin'*fin2;
 theta=toeplitz([1;flipud(A)]);
 theta=tril(theta);
 B=theta*fin1;
-eT=filt(B',[1 flipud(A)'],'iodelay',d);
+eT=filt(B',[1 flipud(A)'])*filt([zeros(1,d) 1],1);
 end

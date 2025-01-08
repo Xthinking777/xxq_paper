@@ -123,7 +123,7 @@ title('Variance Comparison');
 xlabel('Sat percent(%)');
 ylabel('Variance');
 
-% %% 估计饱和度为零时的脉冲响应
+%% 估计饱和度为零时的脉冲响应
 % g_1=g_est(2,1:200);
 % g_2=g_est(3,1:200);
 % % g_00=impulse(G_theo, 200-1)';%理论值
