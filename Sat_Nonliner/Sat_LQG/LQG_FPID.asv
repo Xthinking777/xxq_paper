@@ -1,6 +1,6 @@
 %% 选择模型
-choose_model = 'H1';
-
+% clear
+choose_model = 'H5';
 switch choose_model
     case 'A'
         %数值算例原模型
@@ -52,9 +52,9 @@ switch choose_model
         disp('非线性原模型');
      case 'G'
         % 无饱和原模型2
+        d = 3;
         NN = filt([1 0], [1 -0.8899]);
         TT = filt([0.6299 0], [1 -0.8899]);%去时延
-        d = 3;
         N = NN;
         T = TT * filt([zeros(1, d) 1], 1);%带时延
         disp('无饱和原模型2');
@@ -63,9 +63,9 @@ switch choose_model
         load('T_gxt_est_case3.mat');
         load('N_gxt_est_case3.mat');
         load('Sat_percent_3.mat');
+        d = 3;
         NN = N_gxt_est(1);
         TT = T_gxt_est(1) * filt(1,[zeros(1, d) 1]);%去时延
-        d = 3;
         N = NN;
         T =T_gxt_est(1);%带时延
         fprintf('饱和度%d%%估计模型GXT\n', Sat_percent_3(1));
@@ -74,20 +74,20 @@ switch choose_model
         load('T_gxt_est_case3.mat');
         load('N_gxt_est_case3.mat');
         load('Sat_percent_3.mat');
-        NN = N_gxt_est(2);
-        TT = T_gxt_est(2) * filt(1,[zeros(1, d) 1])/(1-Sat_percent_3(2)*0.01);%去时延
         d = 3;
+        NN = N_gxt_est(2);
+        TT = T_gxt_est(2) * filt(1,[zeros(1, d) 1]);%去时延
         N = NN;
-        T =T_gxt_est(2)/(1-Sat_percent_3(2)*0.01);%带时延
+        T =T_gxt_est(2);%带时延
         fprintf('饱和度%d%%估计模型GXT\n', Sat_percent_3(2));
      case 'H2'
         % 非线性估计模型GXT 饱和度3
         load('T_gxt_est_case3.mat');
         load('N_gxt_est_case3.mat');
         load('Sat_percent_3.mat');
+        d = 3;
         NN = N_gxt_est(3);
         TT = T_gxt_est(3) * filt(1,[zeros(1, d) 1]);%去时延
-        d = 3;
         N = NN;
         T =T_gxt_est(3);%带时延
         fprintf('饱和度%d%%估计模型GXT\n', Sat_percent_3(3));
@@ -96,16 +96,43 @@ switch choose_model
         load('T_gxt_est_case3.mat');
         load('N_gxt_est_case3.mat');
         load('Sat_percent_3.mat');
-        NN = N_gxt_est(4);
-        TT = T_gxt_est(4) * filt(1,[zeros(1, d) 1])/(1-Sat_percent_3(4)*0.01);%去时延
         d = 3;
+        NN = N_gxt_est(4);
+        TT = T_gxt_est(4) * filt(1,[zeros(1, d) 1]);%去时延
         N = NN;
-        T =T_gxt_est(4)/(1-Sat_percent_3(4)*0.01);%带时延
+        T =T_gxt_est(4);%带时延
         fprintf('饱和度%2d%%估计模型GXT\n', Sat_percent_3(4));
+    case 'H4'
+        % 非线性估计模型GXT 饱和度4
+        load('T_gxt_est_case3.mat');
+        load('N_gxt_est_case3.mat');
+        load('Sat_percent_3.mat');
+        d = 3;
+        NN = N_gxt_est(5);
+        TT = T_gxt_est(5) * filt(1,[zeros(1, d) 1]);%去时延
+        N = NN;
+        T =T_gxt_est(5);%带时延
+        fprintf('饱和度%2d%%估计模型GXT\n', Sat_percent_3(5));
+    case 'H5'
+        % 非线性估计模型GXT 饱和度4
+        load('T_gxt_est_case3.mat');
+        load('N_gxt_est_case3.mat');
+        load('Sat_percent_3.mat');
+        d = 3;
+        NN = N_gxt_est(6);
+        TT = T_gxt_est(6) * filt(1,[zeros(1, d) 1]);%去时延
+        N = NN;
+        T =T_gxt_est(6);%带时延
+        fprintf('饱和度%2d%%估计模型GXT\n', Sat_percent_3(6));
+   
     otherwise
         disp('无效的模型');
 end
 
+function [LQG_3D]=LQG_FPID(NN,TT,d)
+
+
+ TT = T_gxt_est(6) * filt(1,[zeros(1, d) 1]);%去时延
 NAD=NN;
 TAD=TT;
 lmd_set=[0 0.1 0.4 1 3 5 50];%λ集合
@@ -319,4 +346,6 @@ LQG_3D(lmd_i,4)=kcs(1);
 LQG_3D(lmd_i,5)=kcs(2);
 LQG_3D(lmd_i,6)=kcs(3);
 LQG_3D(lmd_i,7)=acs;
+end
+
 end

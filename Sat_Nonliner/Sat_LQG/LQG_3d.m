@@ -1,6 +1,6 @@
 %1.创建数据
 % 定义数据点
-clear
+
 load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\Sat_percent_3.mat');
 load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\G_LQG_3D.mat');
 var_y_00 =LQG_3D(:,2);
