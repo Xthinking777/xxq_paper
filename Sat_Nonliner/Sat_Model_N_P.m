@@ -40,7 +40,7 @@ N_3 = filt(N_fenzi_3,N_fenmu_3);
 
 d_3=3;
 %sat_alpha_set_3=[5 1.5 1.3 1 0.8 0.7];%2.05--10%  1.75--20%  ...0--100%
-sat_alpha_set_3=[5 1.5 1.3 1 0.8 0.6];%2.05--10%  1.3--20%  1--30...0--100%
+sat_alpha_set_3=[0.55 0.38 0.3];%2.05--10%  1.3--20%  1--30...0--100%  77.6	69.3	53.3
 %-------------------------------------------------------------
 
 
@@ -131,6 +131,7 @@ var_sat_u_case_3=var_sat_u.^0.5;
 
 Sat_percent_3=Sat_percent;
 g_est_3=g_est;
+save('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\g_est_3.mat');
 
 % 求估计方差
 % var_y_est_3=zeros(1,4);
@@ -211,9 +212,9 @@ g_est_3=g_est;
 
 %% 高鑫桐估计N
 %load('g_est_switch.mat');%加载FCOR后的 饱和闭环脉冲响应g_i
-load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\g_est_3.mat');
+% load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\g_est_3.mat');
 g_est_gxt=g_est_3;
-for sat_percent_i=1:1:6
+for sat_percent_i=1:1:3
     N_order_case=3;%根据不同的N阶次修改
     N_gxt_est(sat_percent_i)=  estimate_N_Sxt(d,g_est_gxt(sat_percent_i,1:50),N_order_case);
     G_sat_est(sat_percent_i)=Tansfor(g_est_gxt(sat_percent_i,1:100)',0,12,50);
@@ -239,7 +240,7 @@ end
 %% 绘制 G N T脉冲响应
 figure; % 创建一个新的图形窗口
 % 绘制 N 的脉冲响应
-for sat_percent_i = 1:6
+for sat_percent_i = 1:3
     plot(1:50, impulse(N_gxt_est(sat_percent_i), 49), 'b--'); % 饱和估计值
     hold on; % 保持当前图形，继续绘制
 end

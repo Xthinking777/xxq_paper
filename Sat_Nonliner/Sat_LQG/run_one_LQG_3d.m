@@ -1,13 +1,16 @@
 %1.创建数据
 % 定义数据点
 %理论值
-% clear
-load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\Sat_percent_3.mat');
+clear
+%load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\Sat_percent_3.mat');
+
+Sat_percent_3=[53.4 69.1 77 20 30 50];
 load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\G_LQG_3D.mat');
 var_y_00 =LQG_3D(:,2);
 var_u_00 =LQG_3D(:,3);
 %不同饱和度估计值
-load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\H_LQG_3D_ALL.mat');
+%load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\H_LQG_3D_ALL.mat');
+load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\H_LQG_3D_ALL111.mat');
 for Sat_percent_3_i=1:1:length(Sat_percent_3)
 var_y(Sat_percent_3_i,1:7)=LQG_3D_ALL(Sat_percent_3_i,:,2);
 var_u(Sat_percent_3_i,1:7)=LQG_3D_ALL(Sat_percent_3_i,:,3);
@@ -16,10 +19,10 @@ end
 load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\sim_var_sat_u_case_3.mat');
 load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\sim_var_u_case_3.mat');
 load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\sim_var_y_case_3.mat');
-sim_sat_percent_case_3=1;
+sim_sat_percent_case_3=6;
 sim_var_y_2 =sim_var_y_case_3(sim_sat_percent_case_3,:);
-sim_var_u_2 =sim_var_u_case_3(sim_sat_percent_case_3,:);
-% 2.多项式拟合
+sim_var_u_2 =sim_var_sat_u_case_3(sim_sat_percent_case_3,:);
+% 2.多项式拟合 
 p_00 = polyfit(var_u_00, var_y_00, 3); % 拟合三次多项式
 var_u_fit_00 = linspace(min(var_u_00), max(var_u_00), 100); % 生成平滑曲线的 x 点
 var_y_fit_00 = polyval(p_00, var_u_fit_00); % 计算对应的 y 值
@@ -54,6 +57,7 @@ end
 plot(sim_var_u_fit_2, sim_var_y_fit_2, 'r-', 'LineWidth', 2); % 仿真拟合曲线
 
 hold off; % 取消保持状态
+Sat_percent_3=[53.4 69.1 77 20 30 50];
 sat_percent_1=num2str(Sat_percent_3(1));
 sat_percent_2=num2str(Sat_percent_3(2));
 sat_percent_3=num2str(Sat_percent_3(3));

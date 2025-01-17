@@ -3,7 +3,8 @@
 N_thero = filt([1 0], [1 -0.8899]);
 
 
-choose_model_set=['H0','H1','H2','H3','H4','H5'];
+% choose_model_set=['H0','H1','H2','H3','H4','H5'];
+choose_model_set=['H0','H1','H2'];
 for choose_model_set_i=1:2:length(choose_model_set)-1 
 %% 选择模型
 choose_model = [choose_model_set(choose_model_set_i) choose_model_set(choose_model_set_i+1)];
@@ -141,3 +142,5 @@ LQG_3D=LQG_FPID(N,T,d);%高
 LQG_3D_ALL((choose_model_set_i+1)/2,:,:)=LQG_3D;
 
 end
+save('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\H_LQG_3D_ALL.mat');
+
