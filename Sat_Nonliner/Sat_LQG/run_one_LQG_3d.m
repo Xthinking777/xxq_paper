@@ -1,10 +1,9 @@
 %1.创建数据
 % 定义数据点
 %理论值
-clear
-%load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\Sat_percent_3.mat');
-
-Sat_percent_3=[53.4 69.1 77 20 30 50];
+% clear
+load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\Sat_model\Sat_percent_3.mat');
+% Sat_percent_3=[53.4 69.1 77 20 30 50];
 load('D:\Users\xthinking\Documents\MATLAB\xxq_code1218Git\xxq_paper\Sat_Nonliner\mat\LQG_plot\G_LQG_3D.mat');
 var_y_00 =LQG_3D(:,2);
 var_u_00 =LQG_3D(:,3);
